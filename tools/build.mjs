@@ -54,6 +54,18 @@ function statics() {
   fs.writeFileSync(path.join(out, 'THIRD-PARTY-LICENSES.txt'), text);
 }
 
+// The source zip. In a git checkout it holds what git would commit (tracked and new files, minus .gitignore and
+// .git/info/exclude), so local folders such as feedback/ and exports/ stay out; elsewhere, the folder minus build output.
+function sourceZip(file) {
+  if (fs.existsSync(path.join(root, '.git'))) {
+    const files = execSync('git ls-files -z --cached --others --exclude-standard', { cwd: root, encoding: 'utf8' })
+      .split('\0').filter((f) => f && fs.existsSync(path.join(root, f)));
+    execSync(`zip -q -9 -@ "${file}"`, { cwd: root, input: files.join('\n') });
+  } else {
+    execSync(`cd "${root}" && zip -qr -9 "${file}" . -x "node_modules/*" "dist/*" ".git/*" "*.DS_Store" "tools/**/out/*" "feedback/*" "exports/*" "backups/*" "CLAUDE.md" "how to talk to claude.txt"`);
+  }
+}
+
 if (watch) {
   const ctx = await esbuild.context(opts);
   statics();
@@ -66,7 +78,7 @@ if (watch) {
     const dist = path.join(root, 'dist');
     for (const f of ['splinterhall-itch.zip', 'splinterhall-source.zip', 'splinterhall-wifi-host.zip']) fs.rmSync(path.join(dist, f), { force: true });
     execSync(`cd "${out}" && zip -qr -9 ../splinterhall-itch.zip .`);
-    execSync(`cd "${root}" && zip -qr -9 dist/splinterhall-source.zip . -x "node_modules/*" "dist/*" ".git/*" "*.DS_Store" "tools/**/out/*"`);
+    sourceZip(path.join(dist, 'splinterhall-source.zip'));
     // The Wi-Fi host pack: the game plus a small Python server that also relays the room (optional itch download).
     const pack = path.join(dist, 'wifi-host');
     fs.rmSync(pack, { recursive: true, force: true });

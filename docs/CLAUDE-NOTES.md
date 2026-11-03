@@ -7,7 +7,7 @@ How to build, test and hand over an update of Splinterhall. Read README.md and d
 1. `npm install` (once), edit `src/`, then `node tools/build.mjs --nozip` for a quick build or `npm run build` for the zips.
 2. Syntax and bundle errors show in the build. Then run the headless checks below.
 3. Update `CHANGELOG.md` (a new `## Prototype N` at the top) and bump `PROTOTYPE` in `src/core/consts.js`.
-4. Don't push to GitHub: Eric uploads the source zip himself.
+4. The repository is on GitHub at `lucidfir-ops/SplinterHall` (main). Commit with a message like `Prototype N: short list of changes`. Don't push: Eric pushes to GitHub himself.
 
 ## Headless checks (Node, no browser)
 
@@ -122,3 +122,5 @@ Rules that keep it fast:
 ## Handing over
 
 Each handover is three files from `dist/`: `splinterhall-itch.zip`, `splinterhall-cover.png`, `splinterhall-source.zip` (the build also writes the optional `splinterhall-wifi-host.zip`). Say what changed, and whether level codes still build the same levels.
+
+In a git checkout the source zip holds what git would commit (tracked and new files, minus `.gitignore` and `.git/info/exclude`), so local folders kept beside the repo (the designer's `feedback/`, the `exports/` of past handovers) never end up in it.
