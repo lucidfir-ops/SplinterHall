@@ -1,0 +1,31 @@
+// The player camera on a landscape phone: the drop-in (whole arena), the fight (close on you), a tap on the eye
+// (whole arena for a moment), then back.   node tools/dev/camshots.mjs <dir>
+import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path'; import { chromium } from 'playwright';
+const root = path.resolve('dist/web');
+const types = { '.js': 'text/javascript', '.html': 'text/html', '.css': 'text/css', '.json': 'application/json', '.woff2': 'font/woff2' };
+const server = http.createServer((req, res) => { const p = path.join(root, decodeURIComponent(req.url.split('?')[0]).replace(/^\/$/, '/index.html')); if (!fs.existsSync(p) || fs.statSync(p).isDirectory()) { res.writeHead(404); res.end(); return; } res.writeHead(200, { 'Content-Type': types[path.extname(p)] || 'application/octet-stream' }); fs.createReadStream(p).pipe(res); });
+await new Promise((r) => server.listen(0, r));
+const S = process.argv[2] || '.';
+const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome', headless: true, args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+const ctx = await browser.newContext({ viewport: { width: 844, height: 390 }, hasTouch: true, isMobile: true });
+const page = await ctx.newPage();
+const errs = [];
+page.on('pageerror', (e) => errs.push(e.message));
+page.on('console', (m) => { if (m.type() === 'error' && !/404|GPU stall/.test(m.text())) errs.push(m.text().slice(0, 200)); });
+await page.goto(`http://127.0.0.1:${server.address().port}/index.html?test=1&dev=1&fighters=5&quality=lite&code=BXAH67KH`);
+await page.waitForTimeout(4000);
+await page.screenshot({ path: `${S}/cam-1-dropin.png` });
+for (let i = 0; i < 40 && !(await page.evaluate(() => window.__splinterhall.match?.sim?.phase === 'fight')); i++) await page.waitForTimeout(250);
+await page.waitForTimeout(2500);
+await page.screenshot({ path: `${S}/cam-2-follow.png` });
+const cam = () => page.evaluate(() => { const c = window.__splinterhall.view.cam; return { x: +c.x.toFixed(1), y: +c.y.toFixed(1), w: +c.w.toFixed(1) }; });
+console.log('follow', await cam());
+await page.tap('.sh-tview');
+await page.waitForTimeout(1300);
+await page.screenshot({ path: `${S}/cam-3-overview.png` });
+console.log('overview', await cam());
+await page.waitForTimeout(3000);
+console.log('back', await cam());
+await page.screenshot({ path: `${S}/cam-4-back.png` });
+console.log('errors', errs);
+await browser.close(); server.close();

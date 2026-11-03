@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Splinterhall music render</title>
+</head>
+<body>
+<p>Offline render page, driven by tools/music/render.mjs.</p>
+<script type="module">
+import { createMusic, generateTune } from '../../src/audio/music/index.js';
+
+function wav(buf) {
+  const ch = buf.numberOfChannels, n = buf.length, sr = buf.sampleRate;
+  const out = new DataView(new ArrayBuffer(44 + n * ch * 2));
+  const w = (o, s) => { for (let i = 0; i < s.length; i++) out.setUint8(o + i, s.charCodeAt(i)); };
+  w(0, 'RIFF'); out.setUint32(4, 36 + n * ch * 2, true); w(8, 'WAVE'); w(12, 'fmt ');
+  out.setUint32(16, 16, true); out.setUint16(20, 1, true); out.setUint16(22, ch, true); out.setUint32(24, sr, true);
+  out.setUint32(28, sr * ch * 2, true); out.setUint16(32, ch * 2, true); out.setUint16(34, 16, true); w(36, 'data');
+  out.setUint32(40, n * ch * 2, true);
+  const data = [];
+  for (let c = 0; c < ch; c++) data.push(buf.getChannelData(c));
+  let o = 44, clip = 0;
+  for (let i = 0; i < n; i++) for (let c = 0; c < ch; c++) {
+    let v = data[c][i];
+    if (v > 1 || v < -1) clip++;
+    v = Math.max(-1, Math.min(1, v));
+    out.setInt16(o, v < 0 ? v * 32768 : v * 32767, true); o += 2;
+  }
+  return { bytes: new Uint8Array(out.buffer), clip };
+}
+
+function b64(bytes) {
+  let s = '';
+  const CH = 0x8000;
+  for (let i = 0; i < bytes.length; i += CH) s += String.fromCharCode.apply(null, bytes.subarray(i, i + CH));
+  return btoa(s);
+}
+
+/** Build the script: a list of [time, fn] plus a log of what was scripted. */
+function buildScript(spec, music) {
+  const out = [];
+  const log = [];
+  for (const it of spec) {
+    const [t, kind, a, b] = it;
+    out.push([t, (m) => {
+      if (kind === 'event') m.event(a, b == null ? 1 : b);
+      else if (kind === 'tension') m.tension(a);
+      else if (kind === 'roundStart') m.roundStart();
+      else if (kind === 'finalKill') m.finalKill();
+      else if (kind === 'roundEnd') m.roundEnd(a);
+      else if (kind === 'matchEnd') m.matchEnd();
+      else if (kind === 'start') m.start(a);
+      log.push({ t, kind, a });
+    }]);
+  }
+  return { script: out, log };
+}
+
+window.renderMusic = async function ({ seconds, seed, style, spec, simple = false, sampleRate = 44100, solo = null, volume = 1 }) {
+  const ctx = new OfflineAudioContext(2, Math.ceil(seconds * sampleRate), sampleRate);
+  const music = createMusic();
+  const t0 = performance.now();
+  await music.init(ctx, { dest: ctx.destination, base: '../../assets/audio/music/', simple, manual: true });
+  await music.ready();
+  const loadMs = performance.now() - t0;
+  const name = music.setTune(seed, { style, remember: false });
+  music.setVolume(volume);
+  if (solo) {
+    // keep only the named buses: every other bus is held at zero
+    const m = music._internals().mix;
+    const orig = m.level.bind(m);
+    m.level = (bus, v, t, tc) => orig(bus, solo.includes(bus) ? v : 0, t, tc);
+    for (const b of ['drums', 'gtrBus', 'bass', 'strings', 'brass', 'folk', 'lead', 'perc', 'clean', 'drone', 'lead2'])
+      if (!solo.includes(b) && m[b]) m[b].gain.value = 0;
+  }
+  const bars = [];
+  const states = [];
+  const { script } = buildScript(spec, music);
+  // per-stem loudness meters: K-weighted (BS.1770 pre-filter) analysers on each bus and drum piece, read every 40 ms
+  const { mix } = music._internals();
+  const taps = { kick: mix.kick, snare: mix.snare, toms: mix.tomIn[1], hats: mix.hats, cymL: mix.cymL, cymR: mix.cymR, cymC: mix.cymC,
+    drums: mix.drums, perc: mix.perc, gtr: mix.gtrBus, bass: mix.bass, strings: mix.strings, brass: mix.brass,
+    folk: mix.folk, lead: mix.lead, lead2: mix.lead2, clean: mix.clean, drone: mix.drone, master: mix.master };
+  const meters = {};
+  for (const [k, node] of Object.entries(taps)) {
+    const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 38; hp.Q.value = 0.5;
+    const hs = ctx.createBiquadFilter(); hs.type = 'highshelf'; hs.frequency.value = 1681; hs.gain.value = 4;
+    const a = ctx.createAnalyser(); a.fftSize = 2048; node.connect(hp).connect(hs).connect(a);
+    meters[k] = { a, buf: new Float32Array(2048) };
+  }
+  const levels = [];
+  for (let t = 0.04; t < seconds - 0.05; t += 0.04) script.push([t, () => {
+    const row = { t };
+    for (const [k, m] of Object.entries(meters)) {
+      m.a.getFloatTimeDomainData(m.buf);
+      let s2 = 0; for (let i = 0; i < m.buf.length; i++) s2 += m.buf[i] * m.buf[i];
+      row[k] = s2 / m.buf.length;
+    }
+    levels.push(row);
+  }]);
+  // sample the state twice a second
+  for (let t = 0; t < seconds; t += 0.5) script.push([t, (m) => states.push({ t, ...m.state() })]);
+  const t1 = performance.now();
+  const buf = await music.render(seconds, script, { onBar: (b) => bars.push({ ...b }) });
+  const renderMs = performance.now() - t1;
+  const { bytes, clip } = wav(buf);
+  return {
+    name, tune: music.tune() && { ...music.tune(), riff: music.tune().riff.src, hook: music.tune().hook },
+    wav: b64(bytes), clip, bars, states, loadMs, renderMs, warnings: music.warnings(), decoded: music.decodedSeconds(),
+    peakVoices: music.state().peakVoices, levels,
+  };
+};
+window.generateTune = generateTune;
+window.ready = true;
+</script>
+</body>
+</html>

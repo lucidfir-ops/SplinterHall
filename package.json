@@ -1,0 +1,25 @@
+{
+  "name": "splinterhall",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Physics stickman brawler for up to 8 fighters, side-on 2.5D in Three.js, with live-generated instrumental metal.",
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "dev": "node tools/build.mjs --watch"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@dimforge/rapier2d-compat": "^0.21.0",
+    "@trystero-p2p/core": "^0.26.0",
+    "fflate": "^0.8.3",
+    "jsqr": "^1.4.0",
+    "postprocessing": "^6.39.6",
+    "three": "^0.187.0",
+    "trystero": "^0.26.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "playwright": "^1.64.1"
+  }
+}

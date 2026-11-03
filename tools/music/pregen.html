@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Splinterhall song render</title>
+</head>
+<body>
+<p>Offline song render page, driven by tools/music/pregen.mjs.</p>
+<script type="module">
+import { createMusic, generateTune } from '../../src/audio/music/index.js';
+
+function wav(buf) {
+  const ch = buf.numberOfChannels, n = buf.length, sr = buf.sampleRate;
+  const out = new DataView(new ArrayBuffer(44 + n * ch * 2));
+  const w = (o, s) => { for (let i = 0; i < s.length; i++) out.setUint8(o + i, s.charCodeAt(i)); };
+  w(0, 'RIFF'); out.setUint32(4, 36 + n * ch * 2, true); w(8, 'WAVE'); w(12, 'fmt ');
+  out.setUint32(16, 16, true); out.setUint16(20, 1, true); out.setUint16(22, ch, true); out.setUint32(24, sr, true);
+  out.setUint32(28, sr * ch * 2, true); out.setUint16(32, ch * 2, true); out.setUint16(34, 16, true); w(36, 'data');
+  out.setUint32(40, n * ch * 2, true);
+  const data = [];
+  for (let c = 0; c < ch; c++) data.push(buf.getChannelData(c));
+  let o = 44, clip = 0;
+  for (let i = 0; i < n; i++) for (let c = 0; c < ch; c++) {
+    let v = data[c][i];
+    if (v > 1 || v < -1) clip++;
+    v = Math.max(-1, Math.min(1, v));
+    out.setInt16(o, v < 0 ? v * 32768 : v * 32767, true); o += 2;
+  }
+  return { bytes: new Uint8Array(out.buffer), clip };
+}
+
+function b64(bytes) {
+  let s = '';
+  const CH = 0x8000;
+  for (let i = 0; i < bytes.length; i += CH) s += String.fromCharCode.apply(null, bytes.subarray(i, i + CH));
+  return btoa(s);
+}
+
+/**
+ * Render one song: the band plays the tune from Prowl with no count-in and follows a scripted arc of intensity
+ * targets, each moved onto a 4-bar phrase line, then ends with the match-end cadence on a phrase line.
+ *   arc: { points: [[seconds from the first bar, intensity 0..1], ...], end: seconds }
+ * Rising targets jump at once (the ladder climbs, through a one-bar build for two rungs or more); falling targets
+ * only lower the floor, so the band winds down at its own pace (4 bars at the rung, then a rung per 2 bars).
+ */
+window.renderSong = async function ({ seed, style, arc, sampleRate = 44100, lead = 0.25, tail = 4.6 }) {
+  const tune = generateTune(seed + '#0', style);
+  const barDur = (60 / tune.bpm / tune.spb) * tune.barSteps;
+  const phrase = barDur * 4;
+  const snap = (sec) => Math.max(0, Math.round(sec / phrase)) * 4;
+  // targets per bar, later ones win when two land on the same phrase line
+  const byBar = new Map();
+  for (const [sec, v] of arc.points) byBar.set(snap(sec), v);
+  const endBar = Math.max(8, snap(arc.end));
+  const tEnd = lead + endBar * barDur;
+  const hold = barDur * 2;
+  const seconds = tEnd + hold + tail + 0.2;
+  const ctx = new OfflineAudioContext(2, Math.ceil(seconds * sampleRate), sampleRate);
+  const music = createMusic();
+  await music.init(ctx, { dest: ctx.destination, base: '../../assets/audio/music/', manual: true });
+  await music.ready();
+  const name = music.setTune(seed, { style, remember: false });
+  const { band } = music._internals();
+  const I = band.intensity;
+  const script = [];
+  script.push([0, (m) => { m.start('match'); band.start('match', lead); I.value = I.floor = 0.05; }]);
+  let prev = 0.05;
+  for (const [bar, v] of [...byBar.entries()].sort((a, b) => a[0] - b[0])) {
+    if (bar === 0) { script.push([0.001, () => { I.value = I.floor = v; }]); prev = v; continue; }
+    // set it a little before the bar is planned (the planner looks 120 ms ahead)
+    const t = lead + bar * barDur - 0.3;
+    const up = v >= prev;
+    script.push([t, () => { I.update(t); I.floor = v; if (up || I.value < v) I.value = v; }]);
+    prev = v;
+  }
+  // the ending: a held chord over a roll from the phrase line, then the last hit
+  script.push([tEnd - 0.2, () => band.matchEnd(tEnd - 0.05)]);
+  const bars = [];
+  const buf = await music.render(seconds, script, { onBar: (b) => bars.push({ ...b }) });
+  const { bytes, clip } = wav(buf);
+  return {
+    name, title: tune.title, bpm: tune.bpm, meter: tune.meter, key: tune.keyLabel, riff: tune.riff.type, palette: tune.palette,
+    barDur, endBar, tEnd, finalHit: tEnd + hold, seconds, lead, clip, bars, warnings: music.warnings(), peakVoices: music.state().peakVoices,
+    wav: b64(bytes),
+  };
+};
+window.generateTune = generateTune;
+window.ready = true;
+</script>
+</body>
+</html>

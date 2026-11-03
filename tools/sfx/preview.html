@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Splinterhall SFX</title>
+<link rel="icon" href="data:,">
+<!-- Serve the repo root over HTTP (ES modules and fetch don't work from file://):
+       python3 -m http.server 8000      then open  http://localhost:8000/tools/sfx/preview.html -->
+<link rel="stylesheet" href="../../assets/fonts/fonts.css">
+<style>
+  :root { --ink: #0C0C0B; --bone: #E8E2D4; --dim: #8a857a; --accent: #F2C230; --rule: #2a2925; }
+  * { box-sizing: border-box; border-radius: 0; }
+  html, body { margin: 0; background: var(--ink); color: var(--bone); }
+  body { font: 13px/1.4 'JetBrains Mono', ui-monospace, monospace; padding: 16px; }
+  h1 { font: 400 44px/1 'Anton', Impact, sans-serif; letter-spacing: .02em; text-transform: uppercase; margin: 0 0 6px; }
+  .rule { height: 2px; background: var(--bone); margin: 0 0 14px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin-bottom: 16px; }
+  .bar label { display: flex; gap: 8px; align-items: center; text-transform: uppercase; font-size: 11px; color: var(--dim); }
+  .bar output { color: var(--bone); min-width: 3.5em; }
+  input[type=range] { accent-color: var(--accent); width: 130px; }
+  input[type=checkbox] { accent-color: var(--accent); }
+  h2 { font: 400 20px/1 'Anton', Impact, sans-serif; text-transform: uppercase; margin: 20px 0 8px; color: var(--dim); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+  .fx { display: flex; flex-direction: column; border: 2px solid var(--rule); background: #141412; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  .play { text-align: left; padding: 9px 10px 6px; font: 400 17px/1.1 'Anton', Impact, sans-serif; letter-spacing: .03em;
+          text-transform: uppercase; clip-path: polygon(0 0, 100% 0, 100% 100%, 12px 100%, 0 calc(100% - 12px)); }
+  .play .i { font: 700 11px 'JetBrains Mono', monospace; color: var(--dim); margin-right: 6px; }
+  .play:hover, .play:focus-visible { background: var(--accent); color: var(--ink); outline: none; box-shadow: 6px 6px 0 #000; }
+  .play:hover .i, .play:focus-visible .i { color: var(--ink); }
+  .meta { padding: 0 10px 6px; font-size: 10.5px; color: var(--dim); }
+  .vars { display: flex; gap: 4px; padding: 0 10px 8px; }
+  .vars button { border: 2px solid var(--rule); padding: 1px 7px; font-size: 11px; }
+  .vars button:hover { border-color: var(--accent); color: var(--accent); }
+  .wide { border: 2px solid var(--bone); padding: 6px 12px; font: 400 16px 'Anton', Impact, sans-serif; text-transform: uppercase; }
+  .wide:hover { background: var(--bone); color: var(--ink); }
+  #status { color: var(--dim); }
+  .flash { animation: f .12s linear; }
+  @keyframes f { from { background: var(--accent); } to { background: #141412; } }
+</style>
+</head>
+<body>
+<h1>Splinterhall SFX</h1>
+<div class="rule"></div>
+<div class="bar">
+  <button class="wide" id="start">Start audio</button>
+  <label>Volume <input id="vol" type="range" min="0" max="1" step="0.01" value="0.8"><output id="volO">0.80</output></label>
+  <label>Pan x <input id="pan" type="range" min="-1" max="1" step="0.05" value="0"><output id="panO">0.00</output></label>
+  <label>Dist <input id="dist" type="range" min="0" max="1" step="0.05" value="0"><output id="distO">0.00</output></label>
+  <label><input id="vary" type="checkbox" checked> Random pitch / level</label>
+  <button class="wide" id="brawl">Play a brawl</button>
+  <span id="status">Click Start (browsers need a gesture before audio).</span>
+</div>
+<div id="groups"></div>
+
+<script type="module">
+import { createSfx } from '../../src/audio/sfx.js';
+
+const BASE = '../../assets/audio/sfx/';
+const GROUPS = [
+  ['Fighters', /^(punch|thud|land|step|jump|death)/],
+  ['Blades and blunt', /^(axe|sword|hammer|blade|throw|pickup)/],
+  ['Guns and blasts', /^(blunderbuss|rocket|explosion|bomb)/],
+  ['Strange items', /^(web|tractor|portal|serpent|jetpack)/],
+  ['Terrain', /^(break|collapse|debris|crate)/],
+  ['Kill line', /^(lava|splash|fall)/],
+  ['UI and round', /^(ui_|round_)/],
+];
+const $ = (id) => document.getElementById(id);
+let ctx = null, sfx = null, doc = null;
+const durations = {};
+
+doc = await (await fetch(BASE + 'sfx.json')).json();
+const names = Object.keys(doc.effects);
+let idx = 0;
+for (const [title, re] of GROUPS) {
+  const list = names.filter((n) => re.test(n));
+  if (!list.length) continue;
+  const h = document.createElement('h2'); h.textContent = title; $('groups').append(h);
+  const grid = document.createElement('div'); grid.className = 'grid'; $('groups').append(grid);
+  for (const n of list) {
+    const e = doc.effects[n];
+    idx++;
+    const card = document.createElement('div'); card.className = 'fx';
+    const b = document.createElement('button'); b.className = 'play'; b.dataset.name = n;
+    b.innerHTML = `<span class="i">${String(idx).padStart(2, '0')}</span>${n.replace(/_/g, ' ')}`;
+    b.onclick = () => play(n, card);
+    const meta = document.createElement('div'); meta.className = 'meta';
+    meta.textContent = `gain ${e.gain}  ±${Math.round(e.pitchVar * 100)}%  ${e.files.length} file${e.files.length > 1 ? 's' : ''}`;
+    meta.id = 'meta-' + n;
+    card.append(b, meta);
+    if (e.files.length > 1) {
+      const vars = document.createElement('div'); vars.className = 'vars';
+      e.files.forEach((f, i) => {
+        const vb = document.createElement('button'); vb.textContent = i + 1; vb.title = f;
+        vb.onclick = () => playFile(n, f, card);
+        vars.append(vb);
+      });
+      card.append(vars);
+    }
+    $('groups').lastChild.append(card);
+  }
+}
+
+async function start() {
+  if (ctx) { if (ctx.state !== 'running') await ctx.resume(); return; }
+  ctx = new (window.AudioContext || window.webkitAudioContext)();
+  sfx = createSfx();
+  $('status').textContent = 'Decoding…';
+  const t0 = performance.now();
+  const r = await sfx.init(ctx, { base: BASE, manifest: doc });
+  sfx.setVolume(+$('vol').value);
+  $('status').textContent = `${r.loaded} files decoded in ${Math.round(performance.now() - t0)} ms` + (r.failed.length ? `, ${r.failed.length} failed (synth fallback plays)` : '');
+  $('start').textContent = 'Audio on';
+}
+$('start').onclick = start;
+
+function opts() { return { x: +$('pan').value, dist: +$('dist').value, vary: $('vary').checked }; }
+function flash(card) { card.classList.remove('flash'); void card.offsetWidth; card.classList.add('flash'); }
+
+async function play(n, card) {
+  await start();
+  sfx.play(n, opts());
+  if (card) flash(card);
+}
+
+// Play one specific variant: a throwaway one-file manifest entry on a second player.
+const single = {};
+async function playFile(n, f, card) {
+  await start();
+  if (!single[f]) {
+    const p = createSfx();
+    const e = { ...doc.effects[n], files: [f] };
+    await p.init(ctx, { base: BASE, manifest: { effects: { [n]: e } } });
+    single[f] = p;
+  }
+  single[f].setVolume(+$('vol').value);
+  single[f].play(n, opts());
+  flash(card);
+}
+
+for (const id of ['vol', 'pan', 'dist']) {
+  $(id).oninput = () => {
+    $(id + 'O').textContent = (+$(id).value).toFixed(2);
+    if (id === 'vol') { sfx && sfx.setVolume(+$('vol').value); Object.values(single).forEach((p) => p.setVolume(+$('vol').value)); }
+  };
+}
+
+// A few seconds of a fight, to hear the effects against each other.
+$('brawl').onclick = async () => {
+  await start();
+  const t = ctx.currentTime + 0.1;
+  const seq = [
+    [0, 'round_start'], [0.9, 'step'], [1.0, 'step'], [1.1, 'step'], [1.2, 'jump'], [1.45, 'punch_light', -0.3],
+    [1.6, 'punch_mid', -0.3], [1.8, 'punch_heavy', -0.2], [1.85, 'thud', -0.2], [2.1, 'sword_swing', 0.4],
+    [2.25, 'sword_slash', 0.4], [2.5, 'axe_chop', 0.5], [2.55, 'break_wood', 0.5], [2.7, 'debris', 0.5],
+    [2.9, 'rocket_launch', -0.6], [3.0, 'rocket_flight', -0.2], [3.4, 'explosion_mid', 0.3], [3.45, 'break_stone', 0.3],
+    [3.5, 'break_stone', 0.25], [3.6, 'debris', 0.3], [3.7, 'collapse', 0.2], [4.3, 'blunderbuss', -0.5],
+    [4.35, 'break_glass', 0.6], [4.8, 'hammer_smash', 0.1], [4.85, 'break_iron', 0.1], [5.3, 'death', 0.2],
+    [5.5, 'explosion_big', 0], [6.4, 'round_win'],
+  ];
+  for (const [dt, n, x = 0] of seq) sfx.play(n, { when: t + dt, x, vary: $('vary').checked });
+};
+
+document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') ctx && ctx.suspend(); });
+window.__sfxPreviewReady = names.length;
+</script>
+</body>
+</html>

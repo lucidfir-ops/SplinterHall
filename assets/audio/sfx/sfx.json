@@ -1,0 +1,454 @@
+{
+ "_about": "Splinterhall sound effects. name -> files (variants, one picked at random), gain (base linear gain under the music), pitchVar (max fractional pitch variation per play), gainVarDb (max level variation per play, dB), optional maxVoices (concurrent cap for this name) and minGap (seconds between plays, default 0.05). Built by tools/sfx/build_sfx.py; sources in CREDITS.md.",
+ "version": 1,
+ "groups": {
+  "break": {
+   "match": "break_",
+   "maxVoices": 6
+  }
+ },
+ "effects": {
+  "punch_light": {
+   "files": [
+    "punch_light_1.mp3",
+    "punch_light_2.mp3",
+    "punch_light_3.mp3"
+   ],
+   "gain": 0.5315,
+   "pitchVar": 0.06,
+   "gainVarDb": 2.0
+  },
+  "punch_mid": {
+   "files": [
+    "punch_mid_1.mp3",
+    "punch_mid_2.mp3",
+    "punch_mid_3.mp3"
+   ],
+   "gain": 0.6691,
+   "pitchVar": 0.06,
+   "gainVarDb": 2.0
+  },
+  "punch_heavy": {
+   "files": [
+    "punch_heavy_1.mp3",
+    "punch_heavy_2.mp3",
+    "punch_heavy_3.mp3"
+   ],
+   "gain": 0.7952,
+   "pitchVar": 0.06,
+   "gainVarDb": 2.0
+  },
+  "thud": {
+   "files": [
+    "thud_1.mp3",
+    "thud_2.mp3",
+    "thud_3.mp3"
+   ],
+   "gain": 0.563,
+   "pitchVar": 0.06,
+   "gainVarDb": 2.0
+  },
+  "land": {
+   "files": [
+    "land_1.mp3",
+    "land_2.mp3"
+   ],
+   "gain": 0.4472,
+   "pitchVar": 0.06,
+   "gainVarDb": 2.0
+  },
+  "step": {
+   "files": [
+    "step_1.mp3",
+    "step_2.mp3",
+    "step_3.mp3"
+   ],
+   "gain": 0.1998,
+   "pitchVar": 0.08,
+   "gainVarDb": 3.0,
+   "minGap": 0.06
+  },
+  "jump": {
+   "files": [
+    "jump.mp3"
+   ],
+   "gain": 0.3166,
+   "pitchVar": 0.06,
+   "gainVarDb": 2.0
+  },
+  "death": {
+   "files": [
+    "death.mp3"
+   ],
+   "gain": 0.7952,
+   "pitchVar": 0.04,
+   "gainVarDb": 2.0
+  },
+  "axe_chop": {
+   "files": [
+    "axe_chop_1.mp3",
+    "axe_chop_2.mp3"
+   ],
+   "gain": 0.7508,
+   "pitchVar": 0.06,
+   "gainVarDb": 2.0
+  },
+  "sword_swing": {
+   "files": [
+    "sword_swing_1.mp3",
+    "sword_swing_2.mp3",
+    "sword_swing_3.mp3"
+   ],
+   "gain": 0.3986,
+   "pitchVar": 0.08,
+   "gainVarDb": 2.0
+  },
+  "sword_slash": {
+   "files": [
+    "sword_slash_1.mp3",
+    "sword_slash_2.mp3"
+   ],
+   "gain": 0.6317,
+   "pitchVar": 0.06,
+   "gainVarDb": 2.0
+  },
+  "hammer_smash": {
+   "files": [
+    "hammer_smash_1.mp3",
+    "hammer_smash_2.mp3"
+   ],
+   "gain": 0.8923,
+   "pitchVar": 0.05,
+   "gainVarDb": 2.0
+  },
+  "blade_stick": {
+   "files": [
+    "blade_stick_1.mp3",
+    "blade_stick_2.mp3"
+   ],
+   "gain": 0.563,
+   "pitchVar": 0.06,
+   "gainVarDb": 2.0
+  },
+  "throw": {
+   "files": [
+    "throw_1.mp3",
+    "throw_2.mp3"
+   ],
+   "gain": 0.3552,
+   "pitchVar": 0.08,
+   "gainVarDb": 2.0
+  },
+  "pickup": {
+   "files": [
+    "pickup.mp3"
+   ],
+   "gain": 0.3552,
+   "pitchVar": 0.04,
+   "gainVarDb": 2.0
+  },
+  "blunderbuss": {
+   "files": [
+    "blunderbuss.mp3"
+   ],
+   "gain": 0.8923,
+   "pitchVar": 0.05,
+   "gainVarDb": 2.0
+  },
+  "rocket_launch": {
+   "files": [
+    "rocket_launch.mp3"
+   ],
+   "gain": 0.7508,
+   "pitchVar": 0.05,
+   "gainVarDb": 2.0
+  },
+  "rocket_flight": {
+   "files": [
+    "rocket_flight.mp3"
+   ],
+   "gain": 0.4472,
+   "pitchVar": 0.04,
+   "gainVarDb": 2.0
+  },
+  "explosion_small": {
+   "files": [
+    "explosion_small_1.mp3",
+    "explosion_small_2.mp3"
+   ],
+   "gain": 0.8424,
+   "pitchVar": 0.06,
+   "gainVarDb": 2.0
+  },
+  "explosion_mid": {
+   "files": [
+    "explosion_mid_1.mp3",
+    "explosion_mid_2.mp3"
+   ],
+   "gain": 0.9451,
+   "pitchVar": 0.05,
+   "gainVarDb": 2.0
+  },
+  "explosion_big": {
+   "files": [
+    "explosion_big.mp3"
+   ],
+   "gain": 1.0012,
+   "pitchVar": 0.04,
+   "gainVarDb": 2.0
+  },
+  "bomb_fuse": {
+   "files": [
+    "bomb_fuse.mp3"
+   ],
+   "gain": 0.3166,
+   "pitchVar": 0.05,
+   "gainVarDb": 2.0
+  },
+  "bomb_bounce": {
+   "files": [
+    "bomb_bounce_1.mp3",
+    "bomb_bounce_2.mp3"
+   ],
+   "gain": 0.563,
+   "pitchVar": 0.06,
+   "gainVarDb": 2.0
+  },
+  "web_splat": {
+   "files": [
+    "web_splat_1.mp3",
+    "web_splat_2.mp3"
+   ],
+   "gain": 0.563,
+   "pitchVar": 0.06,
+   "gainVarDb": 2.0
+  },
+  "web_line": {
+   "files": [
+    "web_line.mp3"
+   ],
+   "gain": 0.5018,
+   "pitchVar": 0.06,
+   "gainVarDb": 2.0
+  },
+  "tractor_on": {
+   "files": [
+    "tractor_on.mp3"
+   ],
+   "gain": 0.3986,
+   "pitchVar": 0.03,
+   "gainVarDb": 2.0
+  },
+  "tractor_off": {
+   "files": [
+    "tractor_off.mp3"
+   ],
+   "gain": 0.3986,
+   "pitchVar": 0.03,
+   "gainVarDb": 2.0
+  },
+  "portal_open": {
+   "files": [
+    "portal_open.mp3"
+   ],
+   "gain": 0.563,
+   "pitchVar": 0.03,
+   "gainVarDb": 2.0
+  },
+  "portal_pass": {
+   "files": [
+    "portal_pass.mp3"
+   ],
+   "gain": 0.5018,
+   "pitchVar": 0.05,
+   "gainVarDb": 2.0
+  },
+  "serpent_rise": {
+   "files": [
+    "serpent_rise.mp3"
+   ],
+   "gain": 0.9451,
+   "pitchVar": 0.03,
+   "gainVarDb": 2.0
+  },
+  "serpent_crunch": {
+   "files": [
+    "serpent_crunch_1.mp3",
+    "serpent_crunch_2.mp3"
+   ],
+   "gain": 0.7508,
+   "pitchVar": 0.06,
+   "gainVarDb": 2.0
+  },
+  "jetpack": {
+   "files": [
+    "jetpack.mp3"
+   ],
+   "gain": 0.3986,
+   "pitchVar": 0.05,
+   "gainVarDb": 2.0
+  },
+  "break_stone": {
+   "files": [
+    "break_stone_1.mp3",
+    "break_stone_2.mp3",
+    "break_stone_3.mp3"
+   ],
+   "gain": 0.7088,
+   "pitchVar": 0.06,
+   "gainVarDb": 2.0,
+   "maxVoices": 6
+  },
+  "break_wood": {
+   "files": [
+    "break_wood_1.mp3",
+    "break_wood_2.mp3"
+   ],
+   "gain": 0.7088,
+   "pitchVar": 0.06,
+   "gainVarDb": 2.0,
+   "maxVoices": 6
+  },
+  "break_iron": {
+   "files": [
+    "break_iron_1.mp3",
+    "break_iron_2.mp3"
+   ],
+   "gain": 0.7088,
+   "pitchVar": 0.06,
+   "gainVarDb": 2.0,
+   "maxVoices": 6
+  },
+  "break_ice": {
+   "files": [
+    "break_ice_1.mp3",
+    "break_ice_2.mp3"
+   ],
+   "gain": 0.6317,
+   "pitchVar": 0.06,
+   "gainVarDb": 2.0,
+   "maxVoices": 6
+  },
+  "break_glass": {
+   "files": [
+    "break_glass_1.mp3",
+    "break_glass_2.mp3"
+   ],
+   "gain": 0.6317,
+   "pitchVar": 0.06,
+   "gainVarDb": 2.0,
+   "maxVoices": 6
+  },
+  "collapse": {
+   "files": [
+    "collapse.mp3"
+   ],
+   "gain": 0.8923,
+   "pitchVar": 0.04,
+   "gainVarDb": 2.0
+  },
+  "debris": {
+   "files": [
+    "debris_1.mp3",
+    "debris_2.mp3",
+    "debris_3.mp3"
+   ],
+   "gain": 0.2515,
+   "pitchVar": 0.08,
+   "gainVarDb": 3.0,
+   "maxVoices": 8,
+   "minGap": 0.04
+  },
+  "crate_land": {
+   "files": [
+    "crate_land_1.mp3",
+    "crate_land_2.mp3"
+   ],
+   "gain": 0.563,
+   "pitchVar": 0.06,
+   "gainVarDb": 2.0
+  },
+  "lava_hiss": {
+   "files": [
+    "lava_hiss.mp3"
+   ],
+   "gain": 0.563,
+   "pitchVar": 0.05,
+   "gainVarDb": 2.0
+  },
+  "splash": {
+   "files": [
+    "splash_1.mp3",
+    "splash_2.mp3"
+   ],
+   "gain": 0.6691,
+   "pitchVar": 0.06,
+   "gainVarDb": 2.0
+  },
+  "fall_whoosh": {
+   "files": [
+    "fall_whoosh.mp3"
+   ],
+   "gain": 0.563,
+   "pitchVar": 0.04,
+   "gainVarDb": 2.0
+  },
+  "ui_focus": {
+   "files": [
+    "ui_focus.mp3"
+   ],
+   "gain": 0.2001,
+   "pitchVar": 0.03,
+   "gainVarDb": 1.0,
+   "minGap": 0.035
+  },
+  "ui_confirm": {
+   "files": [
+    "ui_confirm.mp3"
+   ],
+   "gain": 0.2822,
+   "pitchVar": 0.02,
+   "gainVarDb": 1.0
+  },
+  "ui_back": {
+   "files": [
+    "ui_back.mp3"
+   ],
+   "gain": 0.2515,
+   "pitchVar": 0.02,
+   "gainVarDb": 1.0
+  },
+  "ui_ready": {
+   "files": [
+    "ui_ready.mp3"
+   ],
+   "gain": 0.3552,
+   "pitchVar": 0.02,
+   "gainVarDb": 1.0
+  },
+  "ui_deny": {
+   "files": [
+    "ui_deny.mp3"
+   ],
+   "gain": 0.2515,
+   "pitchVar": 0.02,
+   "gainVarDb": 1.0
+  },
+  "round_start": {
+   "files": [
+    "round_start.mp3"
+   ],
+   "gain": 0.8923,
+   "pitchVar": 0.0,
+   "gainVarDb": 0.0
+  },
+  "round_win": {
+   "files": [
+    "round_win.mp3"
+   ],
+   "gain": 0.8923,
+   "pitchVar": 0.0,
+   "gainVarDb": 0.0
+  }
+ }
+}

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Splinterhall Music Bench</title>
+<style>
+  :root { --bg: #0c0c0b; --fg: #e8e2d4; --dim: #8a857a; --acc: #e0452b; --slab: #1b1a18; }
+  * { box-sizing: border-box; border-radius: 0; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 14px/1.4 ui-monospace, "JetBrains Mono", Menlo, monospace; }
+  main { max-width: 980px; margin: 0 auto; padding: 16px; }
+  h1 { font: 700 28px/1 Impact, "Anton", sans-serif; letter-spacing: 0.04em; text-transform: uppercase; margin: 8px 0 4px; }
+  h2 { font-size: 12px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.12em; margin: 18px 0 6px; border-top: 2px solid var(--slab); padding-top: 10px; }
+  .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  button { background: var(--slab); color: var(--fg); border: 2px solid #33302b; padding: 9px 12px; font: inherit; cursor: pointer;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%); }
+  button:hover, button:focus-visible { border-color: var(--fg); outline: none; }
+  button.on { background: var(--acc); color: #0c0c0b; border-color: var(--acc); }
+  input[type=range] { width: 260px; accent-color: var(--acc); }
+  input[type=text] { background: var(--slab); color: var(--fg); border: 2px solid #33302b; padding: 8px; font: inherit; width: 180px; }
+  #now { font-size: 18px; margin: 6px 0; min-height: 1.4em; }
+  .ladder { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-top: 6px; }
+  .ladder div { background: var(--slab); padding: 10px 6px; text-align: center; text-transform: uppercase; font-size: 12px; }
+  .ladder div.lit { background: var(--fg); color: var(--bg); }
+  .meter { height: 10px; background: var(--slab); position: relative; margin-top: 6px; }
+  .meter i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--acc); width: 0; }
+  .meter b { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--fg); }
+  pre { background: var(--slab); padding: 10px; overflow-x: auto; font-size: 12px; color: var(--dim); white-space: pre-wrap; }
+  .note { color: var(--dim); font-size: 12px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Splinterhall · music bench</h1>
+  <p class="note">Serve the repo root (<code>node tools/music/serve.mjs</code>) and open /tools/music/preview.html. Click Start once to unlock audio.</p>
+  <div id="now">Not started</div>
+  <div class="ladder" id="ladder"><div>Prowl</div><div>Riff</div><div>Charge</div><div>Battle</div><div>Crescendo</div></div>
+  <div class="meter"><i id="int"></i><b id="floor"></b></div>
+
+  <h2>Tune</h2>
+  <div class="row">
+    <button id="start">Start</button>
+    <button data-style="any" class="on">Any</button>
+    <button data-style="viking">Viking</button>
+    <button data-style="battle">Battle</button>
+    <button data-style="power">Power</button>
+    <input type="text" id="seed" value="F7K2Q9XM" aria-label="seed">
+    <button id="apply">Set seed</button>
+    <button id="next">Next tune</button>
+    <label class="row"><input type="checkbox" id="simple"> Simple</label>
+  </div>
+
+  <h2>Mode</h2>
+  <div class="row">
+    <button id="menu">Menu music</button>
+    <button id="match">Match (round start)</button>
+    <button id="stop">Stop</button>
+    <label class="row">Volume <input type="range" id="vol" min="0" max="1" step="0.01" value="1"></label>
+  </div>
+
+  <h2>Intensity</h2>
+  <div class="row">
+    <label class="row">Hold at <input type="range" id="hold" min="0" max="1" step="0.01" value="0"> <span id="holdv">off</span></label>
+    <button id="release">Release hold</button>
+  </div>
+
+  <h2>Events</h2>
+  <div class="row" id="events">
+    <button data-ev="hit">Hit</button><button data-ev="heavy">Heavy</button><button data-ev="blast">Blast</button>
+    <button data-ev="kill">Kill</button><button data-ev="summon">Summon</button><button data-ev="break">Break</button>
+    <button data-ev="pickup">Pickup</button>
+  </div>
+  <div class="row" style="margin-top:6px">
+    <button data-ten="8">8 alive</button><button data-ten="3">3 alive</button><button data-ten="2">2 alive</button>
+    <button id="close">Close pairs ×3</button><button id="rag">Ragnarök</button>
+  </div>
+
+  <h2>Moments</h2>
+  <div class="row">
+    <button id="rs">Round start</button><button id="fk">Final kill</button>
+    <button id="rew">Round end (won)</button><button id="rel">Round end (lost)</button><button id="me">Match end</button>
+  </div>
+
+  <h2>State</h2>
+  <pre id="state">-</pre>
+</main>
+<script type="module">
+import { createMusic } from '../../src/audio/music/index.js';
+
+const $ = (id) => document.getElementById(id);
+let ctx = null, music = null, style = 'any', hold = null;
+const tensionState = { alive: 8, closePairs: 0, ragnarok: false };
+
+async function boot() {
+  if (music) return;
+  ctx = new (window.AudioContext || window.webkitAudioContext)();
+  await ctx.resume();
+  music = createMusic();
+  $('now').textContent = 'Loading samples…';
+  await music.init(ctx, { dest: ctx.destination, base: '../../assets/audio/music/', simple: $('simple').checked });
+  music.setTune($('seed').value, { style });
+  music.start('menu');
+  music.ready().then(() => { const w = music.warnings(); if (w.length) console.warn(w); });
+  tick();
+}
+
+function tick() {
+  requestAnimationFrame(tick);
+  if (!music) return;
+  if (hold != null) {
+    const b = music._internals().band;
+    b.intensity.value = hold;
+  }
+  const s = music.state();
+  $('now').textContent = `${s.title || '-'} · ${s.key || ''} · ${s.style || ''} · ${s.bpm} bpm`;
+  [...$('ladder').children].forEach((d, i) => d.classList.toggle('lit', i === s.level));
+  $('int').style.width = `${s.intensity * 100}%`;
+  const fl = music._internals().band.intensity.floor;
+  $('floor').style.left = `${fl * 100}%`;
+  $('state').textContent = JSON.stringify(s, null, 1);
+}
+
+$('start').onclick = boot;
+document.querySelectorAll('[data-style]').forEach((b) => b.onclick = async () => {
+  style = b.dataset.style;
+  document.querySelectorAll('[data-style]').forEach((x) => x.classList.toggle('on', x === b));
+  await boot();
+  music.next({ style });
+});
+$('apply').onclick = async () => { await boot(); music.setTune($('seed').value, { style }); };
+$('next').onclick = async () => { await boot(); music.next({ style }); };
+$('simple').onchange = () => music && music.setSimple($('simple').checked);
+$('menu').onclick = async () => { await boot(); music.start('menu'); };
+$('match').onclick = async () => { await boot(); music.start('match'); music.roundStart(); };
+$('stop').onclick = () => music && music.stop();
+$('vol').oninput = () => music && music.setVolume(+$('vol').value);
+$('hold').oninput = () => { hold = +$('hold').value; $('holdv').textContent = hold.toFixed(2); };
+$('release').onclick = () => { hold = null; $('holdv').textContent = 'off'; };
+document.querySelectorAll('[data-ev]').forEach((b) => b.onclick = () => music && music.event(b.dataset.ev, b.dataset.ev === 'break' ? 5 : 1));
+document.querySelectorAll('[data-ten]').forEach((b) => b.onclick = () => { tensionState.alive = +b.dataset.ten; music && music.tension(tensionState); });
+$('close').onclick = () => { tensionState.closePairs = tensionState.closePairs ? 0 : 3; music && music.tension(tensionState); };
+$('rag').onclick = () => { tensionState.ragnarok = !tensionState.ragnarok; music && music.tension(tensionState); };
+$('rs').onclick = async () => { await boot(); music.roundStart(); };
+$('fk').onclick = () => music && music.finalKill();
+$('rew').onclick = () => music && music.roundEnd(true);
+$('rel').onclick = () => music && music.roundEnd(false);
+$('me').onclick = () => music && music.matchEnd();
+// tension is reported ~10 times a second in the game; mirror that so the floor holds
+setInterval(() => { if (music) music.tension(tensionState); }, 100);
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+SPLINTERHALL · Prototype 4
+
+FILES
+  splinterhall-itch.zip     Upload to itch.io as an HTML game (index.html is at the zip root).
+  splinterhall-cover.png    The itch.io cover image, 630 x 500.
+  splinterhall-source.zip   The whole repository (no node_modules, no dist), ready for GitHub.
+  splinterhall-wifi-host.zip  Optional extra itch.io download (kind: "Other", not the HTML game): the game
+                            plus a small Python server for brawls on one Wi-Fi with no internet, hosted
+                            from a Steam Deck, Linux PC or Mac. Not needed for the in-game QR pairing.
+
+ITCH.IO SETTINGS
+  Kind of project: HTML
+  Embed options: "Click to launch in fullscreen" off; viewport 1280 x 720; tick "Mobile friendly"
+  (orientation: Landscape) and "Fullscreen button".
+  SharedArrayBuffer support is not needed.
+
+BUILDING FROM SOURCE
+  npm install
+  npm run build             writes dist/web/ and the zips
+  node tools/cover.mjs dist/splinterhall-cover.png
+
+SUGGESTED ITCH.IO DESCRIPTION
+  A physics stick brawl for up to 8 fighters, on your phone, tablet, Steam Deck or desktop.
+  One stick, two buttons, and a world made of hundreds of physics blocks: carve it with rockets,
+  smash it with a war hammer, rip it out with a tractor beam, swing through it on a web line,
+  open portals in it, or blow a horn and let a stone serpent chew through it.
+  Every level comes from an 8-character code, and the editor turns your changes into a code to share.
+  Fighters are 3D skeletons with a whole repertoire: jabs, crosses and hooks, haymakers, uppercuts,
+  roundhouses, leg sweeps, flying kicks and dropkicks; an axe that whirls round you, a sword that
+  lunges, a hammer that spins. Instrumental viking, battle, power and folk metal plays throughout.
+  Play against AI, or with friends on the internet or one Wi-Fi with no internet.
+
+  Controls: on a phone, the left thumb runs, jumps (up) and crouches (down); the right thumb plays
+  one square: swipe to hit where you swipe, up for an uppercut, down for a slam (a stomp dive in the
+  air), sweep across for a haymaker, swipe along the bottom to kick (up: roundhouse, crouching: leg
+  sweep, at a run: flying kick, long: dropkick), tap to throw what you hold. The eye shows the whole
+  arena for a moment. Push into a wall in the air and push up to kick off it.
+  Keys: arrows/WASD, Space jump, X hit (Up + X uppercut, Down + X slam), C kick, V haymaker,
+  E throw, Tab view. Pad: A jump, X hit, B kick, Y haymaker, RB throw, Select view.
+  Learn on the title screen teaches every move.
+
+  Credits: folk metal tracks "Raid_FolkMetal" and "Raid_FolkMetal2" by PeriTune (peritune.com),
+  CC BY 4.0. Guitar, bass and bagpipe notes from FluidR3 GM by Frank Wen, rendered by Benjamin
+  Gleitzman's MIDI.js Soundfonts (CC BY 3.0). Everything else is CC0 or open-source licensed;
+  the full list is on the in-game Credits page.

@@ -1,0 +1,15 @@
+import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path'; import { chromium } from 'playwright';
+const root = path.resolve('dist/web');
+const [query, out, w = '1280', h = '720'] = process.argv.slice(2);
+const server = http.createServer((req, res) => { const p = path.join(root, decodeURIComponent(req.url.split('?')[0]).replace(/^\/$/, '/index.html')); if (!fs.existsSync(p) || fs.statSync(p).isDirectory()) { res.writeHead(404); res.end(); return; } res.writeHead(200, { 'Content-Type': p.endsWith('.js') ? 'text/javascript' : p.endsWith('.html') ? 'text/html' : p.endsWith('.css') ? 'text/css' : 'application/octet-stream' }); fs.createReadStream(p).pipe(res); });
+await new Promise((r) => server.listen(0, r));
+const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome', headless: true, args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+const page = await browser.newPage({ viewport: { width: +w, height: +h } });
+page.on('pageerror', (e) => console.log('pageerror', e.message));
+await page.goto(`http://127.0.0.1:${server.address().port}/index.html?${query}`);
+await page.waitForFunction(() => window.__coverReady === true, null, { timeout: 240000 });
+await page.waitForTimeout(1500);
+await page.evaluate(() => { for (const d of document.querySelectorAll('body > div')) if (d.style.position === 'fixed') d.remove(); });
+await page.waitForTimeout(800);
+await page.screenshot({ path: out });
+await browser.close(); server.close();

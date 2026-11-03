@@ -1,0 +1,15 @@
+import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path'; import { chromium } from 'playwright';
+const root = path.resolve('dist/web');
+const server = http.createServer((req, res) => { const p = path.join(root, decodeURIComponent(req.url.split('?')[0]).replace(/^\/$/, '/index.html')); if (!fs.existsSync(p) || fs.statSync(p).isDirectory()) { res.writeHead(404); res.end(); return; } res.writeHead(200, { 'Content-Type': p.endsWith('.js') ? 'text/javascript' : p.endsWith('.html') ? 'text/html' : 'application/octet-stream' }); fs.createReadStream(p).pipe(res); });
+await new Promise((r) => server.listen(0, r));
+const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome', headless: true, args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+page.on('console', (m) => console.log('console', m.type(), m.text().slice(0, 200)));
+page.on('pageerror', (e) => console.log('pageerror', e.message));
+await page.goto(`http://127.0.0.1:${server.address().port}/index.html?test=1`);
+await page.waitForTimeout(6000);
+const dump = () => page.evaluate(() => { const a = window.__splinterhall; return { cur: a.menus.cur && a.menus.cur.id, stack: a.menus.stack.map(s => s.id), btns: [...document.querySelectorAll('#ui .sh-btn')].map(b => b.textContent.trim()).slice(0, 8), active: document.activeElement.tagName }; });
+console.log('before', JSON.stringify(await dump()));
+await page.keyboard.press('Enter'); await page.waitForTimeout(400);
+console.log('after enter', JSON.stringify(await dump()));
+await browser.close(); server.close();

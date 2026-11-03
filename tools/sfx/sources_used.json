@@ -1,0 +1,477 @@
+{
+ "fs:Electricity/powerdown": [
+  "tractor_off"
+ ],
+ "fs:Electricity/teleport": [
+  "portal_open"
+ ],
+ "fs:Superpowers/western-fps-2d/explosion-1": [
+  "explosion_mid"
+ ],
+ "fs:Superpowers/western-fps-2d/explosion-3": [
+  "explosion_big",
+  "explosion_mid"
+ ],
+ "fs:Superpowers/western-fps-2d/gun-4": [
+  "blunderbuss"
+ ],
+ "fs:qubodup/Swooshes/swosh-03": [
+  "throw"
+ ],
+ "fs:qubodup/Swooshes/swosh-05": [
+  "axe_chop"
+ ],
+ "fs:qubodup/Swooshes/swosh-08": [
+  "sword_slash"
+ ],
+ "fs:qubodup/Swooshes/swosh-12": [
+  "jump",
+  "tractor_off"
+ ],
+ "fs:qubodup/Swooshes/swosh-15": [
+  "sword_swing"
+ ],
+ "fs:qubodup/Swooshes/swosh-19": [
+  "web_line"
+ ],
+ "fs:qubodup/Swooshes/swosh-26": [
+  "portal_pass",
+  "sword_swing"
+ ],
+ "fs:qubodup/Swooshes/swosh-31": [
+  "fall_whoosh"
+ ],
+ "fs:qubodup/Swooshes/swosh-40": [
+  "sword_swing"
+ ],
+ "fs:qubodup/Swooshes/swosh-43": [
+  "throw"
+ ],
+ "fs:rubberduck/Bang/bang_01": [
+  "explosion_mid"
+ ],
+ "fs:rubberduck/Bang/bang_06": [
+  "explosion_mid"
+ ],
+ "fs:rubberduck/Bang/bang_07": [
+  "explosion_small"
+ ],
+ "fs:rubberduck/Bang/bang_09": [
+  "explosion_small"
+ ],
+ "fs:rubberduck/Bang/cannon_02": [
+  "blunderbuss",
+  "explosion_big"
+ ],
+ "fs:rubberduck/Bang/fw_03": [
+  "bomb_fuse"
+ ],
+ "fs:rubberduck/BreakingFalling/bfh1_glass_breaking_02": [
+  "break_glass",
+  "break_ice"
+ ],
+ "fs:rubberduck/BreakingFalling/bfh1_glass_breaking_05": [
+  "break_glass",
+  "break_ice"
+ ],
+ "fs:rubberduck/BreakingFalling/bfh1_metal_falling_03": [
+  "break_iron"
+ ],
+ "fs:rubberduck/BreakingFalling/bfh1_rock_breaking_01": [
+  "serpent_crunch"
+ ],
+ "fs:rubberduck/BreakingFalling/bfh1_rock_breaking_02": [
+  "collapse",
+  "explosion_big",
+  "serpent_rise"
+ ],
+ "fs:rubberduck/BreakingFalling/bfh1_rock_falling_01": [
+  "collapse",
+  "explosion_mid"
+ ],
+ "fs:rubberduck/BreakingFalling/bfh1_rock_falling_04": [
+  "break_stone",
+  "debris"
+ ],
+ "fs:rubberduck/BreakingFalling/bfh1_rock_falling_05": [
+  "break_stone"
+ ],
+ "fs:rubberduck/BreakingFalling/bfh1_rock_falling_06": [
+  "break_stone",
+  "debris"
+ ],
+ "fs:rubberduck/BreakingFalling/bfh1_rock_falling_07": [
+  "debris"
+ ],
+ "fs:rubberduck/BreakingFalling/bfh1_wood_breaking_03": [
+  "break_wood"
+ ],
+ "fs:rubberduck/BreakingFalling/bfh1_wood_breaking_04": [
+  "break_wood"
+ ],
+ "fs:rubberduck/RPG/blade_01": [
+  "sword_slash"
+ ],
+ "fs:rubberduck/RPG/blade_03": [
+  "sword_slash"
+ ],
+ "fs:rubberduck/RPG/creature_roar_02": [
+  "serpent_rise"
+ ],
+ "fs:rubberduck/RPG/spell_fire_03": [
+  "lava_hiss"
+ ],
+ "fs:rubberduck/RPG/spell_fire_06": [
+  "bomb_fuse"
+ ],
+ "fs:rubberduck/RPG/stones_01": [
+  "break_stone",
+  "serpent_crunch"
+ ],
+ "fs:rubberduck/RPG/stones_02": [
+  "break_stone"
+ ],
+ "fs:rubberduck/RPG/stones_03": [
+  "serpent_rise"
+ ],
+ "fs:rubberduck/RPG/stones_04": [
+  "break_stone",
+  "hammer_smash",
+  "serpent_crunch"
+ ],
+ "fs:rubberduck/SFX100/spring_03": [
+  "web_line"
+ ],
+ "fs:rubberduck/SFX100V2/sfx100v2_air_02": [
+  "lava_hiss",
+  "rocket_flight"
+ ],
+ "fs:rubberduck/SFX100V2/sfx100v2_air_03": [
+  "jetpack",
+  "rocket_launch"
+ ],
+ "fs:rubberduck/WaterSplashSlime/slime_07": [
+  "web_splat"
+ ],
+ "fs:rubberduck/WaterSplashSlime/slime_09": [
+  "lava_hiss"
+ ],
+ "fs:rubberduck/WaterSplashSlime/slime_15": [
+  "web_splat"
+ ],
+ "fs:rubberduck/WaterSplashSlime/splash_04": [
+  "splash"
+ ],
+ "fs:rubberduck/WaterSplashSlime/splash_07": [
+  "splash"
+ ],
+ "fs:rubberduck/WoodMetal/metal_spring_02": [
+  "blade_stick"
+ ],
+ "fs:rubberduck/WoodMetal/wood_breaking_01": [
+  "break_wood"
+ ],
+ "fs:rubberduck/WoodMetal/wood_breaking_02": [
+  "break_wood"
+ ],
+ "fs:rubberduck/WoodMetal/wood_cracking_04": [
+  "break_ice",
+  "death"
+ ],
+ "fs:rubberduck/WoodMetal/wood_hit_02": [
+  "punch_heavy"
+ ],
+ "fs:rubberduck/WoodMetal/wood_slam_01": [
+  "crate_land"
+ ],
+ "fs:rubberduck/WoodMetal/wood_slam_02": [
+  "crate_land"
+ ],
+ "hv:barrier": [
+  "tractor_on"
+ ],
+ "hv:missile": [
+  "rocket_launch"
+ ],
+ "hv:phase": [
+  "portal_pass"
+ ],
+ "ki:footstep_concrete_000": [
+  "break_stone"
+ ],
+ "ki:footstep_concrete_001": [
+  "break_stone"
+ ],
+ "ki:footstep_concrete_002": [
+  "break_stone"
+ ],
+ "ki:impact_bell_heavy_001": [
+  "round_start"
+ ],
+ "ki:impact_generic_light_000": [
+  "thud"
+ ],
+ "ki:impact_generic_light_001": [
+  "pickup"
+ ],
+ "ki:impact_generic_light_002": [
+  "thud"
+ ],
+ "ki:impact_generic_light_004": [
+  "thud"
+ ],
+ "ki:impact_glass_heavy_000": [
+  "break_glass"
+ ],
+ "ki:impact_glass_heavy_003": [
+  "break_glass"
+ ],
+ "ki:impact_metal_heavy_000": [
+  "bomb_bounce"
+ ],
+ "ki:impact_metal_heavy_002": [
+  "bomb_bounce",
+  "ui_confirm"
+ ],
+ "ki:impact_metal_medium_000": [
+  "ui_deny"
+ ],
+ "ki:impact_metal_medium_001": [
+  "ui_back"
+ ],
+ "ki:impact_mining_000": [
+  "break_stone",
+  "hammer_smash"
+ ],
+ "ki:impact_mining_001": [
+  "serpent_crunch"
+ ],
+ "ki:impact_mining_002": [
+  "break_ice",
+  "break_stone"
+ ],
+ "ki:impact_mining_003": [
+  "break_stone",
+  "hammer_smash"
+ ],
+ "ki:impact_mining_004": [
+  "collapse",
+  "serpent_crunch"
+ ],
+ "ki:impact_plank_medium_000": [
+  "blade_stick"
+ ],
+ "ki:impact_plank_medium_002": [
+  "blade_stick"
+ ],
+ "ki:impact_plate_heavy_000": [
+  "round_start"
+ ],
+ "ki:impact_plate_heavy_001": [
+  "break_iron",
+  "ui_ready"
+ ],
+ "ki:impact_plate_heavy_002": [
+  "break_iron"
+ ],
+ "ki:impact_punch_heavy_000": [
+  "punch_heavy"
+ ],
+ "ki:impact_punch_heavy_001": [
+  "punch_mid"
+ ],
+ "ki:impact_punch_heavy_002": [
+  "punch_heavy"
+ ],
+ "ki:impact_punch_heavy_003": [
+  "death"
+ ],
+ "ki:impact_punch_heavy_004": [
+  "punch_heavy"
+ ],
+ "ki:impact_punch_medium_000": [
+  "punch_light"
+ ],
+ "ki:impact_punch_medium_001": [
+  "punch_light"
+ ],
+ "ki:impact_punch_medium_002": [
+  "punch_mid"
+ ],
+ "ki:impact_punch_medium_003": [
+  "punch_light"
+ ],
+ "ki:impact_punch_medium_004": [
+  "punch_mid"
+ ],
+ "ki:impact_soft_heavy_000": [
+  "thud"
+ ],
+ "ki:impact_soft_heavy_001": [
+  "death"
+ ],
+ "ki:impact_soft_heavy_002": [
+  "splash",
+  "thud"
+ ],
+ "ki:impact_soft_heavy_004": [
+  "thud"
+ ],
+ "ki:impact_soft_medium_000": [
+  "web_splat"
+ ],
+ "ki:impact_soft_medium_001": [
+  "land"
+ ],
+ "ki:impact_soft_medium_002": [
+  "web_splat"
+ ],
+ "ki:impact_soft_medium_003": [
+  "land"
+ ],
+ "ki:impact_wood_heavy_000": [
+  "bomb_bounce",
+  "crate_land"
+ ],
+ "ki:impact_wood_heavy_001": [
+  "axe_chop",
+  "break_wood"
+ ],
+ "ki:impact_wood_heavy_002": [
+  "bomb_bounce",
+  "break_wood"
+ ],
+ "ki:impact_wood_heavy_003": [
+  "axe_chop",
+  "crate_land"
+ ],
+ "kr:belt_handle_1": [
+  "pickup"
+ ],
+ "kr:chop": [
+  "axe_chop",
+  "punch_heavy",
+  "punch_mid"
+ ],
+ "kr:cloth_1": [
+  "punch_light"
+ ],
+ "kr:footstep_0": [
+  "step"
+ ],
+ "kr:footstep_1": [
+  "jump",
+  "land"
+ ],
+ "kr:footstep_3": [
+  "land",
+  "step"
+ ],
+ "kr:footstep_4": [
+  "step"
+ ],
+ "kr:knife_slice_2": [
+  "sword_slash"
+ ],
+ "kr:metal_latch": [
+  "blade_stick",
+  "blunderbuss",
+  "pickup",
+  "ui_confirm",
+  "ui_focus",
+  "ui_ready"
+ ],
+ "ks:explosion_crunch_001": [
+  "collapse"
+ ],
+ "ks:explosion_crunch_004": [
+  "explosion_big",
+  "serpent_rise"
+ ],
+ "ks:force_field_000": [
+  "portal_open"
+ ],
+ "ks:force_field_002": [
+  "tractor_on"
+ ],
+ "ks:low_frequency_explosion_000": [
+  "explosion_big",
+  "explosion_mid",
+  "serpent_rise"
+ ],
+ "ks:low_frequency_explosion_001": [
+  "collapse",
+  "explosion_small",
+  "round_win"
+ ],
+ "ks:thruster_fire_000": [
+  "rocket_flight"
+ ],
+ "ks:thruster_fire_002": [
+  "jetpack"
+ ],
+ "ku:click_003": [
+  "ui_focus"
+ ],
+ "ku:click_005": [
+  "ui_confirm"
+ ],
+ "ku:error_006": [
+  "ui_deny"
+ ],
+ "ku:switch_007": [
+  "ui_back"
+ ],
+ "pi:ambi_dark_woosh": [
+  "fall_whoosh",
+  "portal_open"
+ ],
+ "pi:drum_cymbal_hard": [
+  "round_win"
+ ],
+ "pi:drum_heavy_kick": [
+  "blunderbuss",
+  "death",
+  "punch_heavy",
+  "punch_mid",
+  "rocket_launch"
+ ],
+ "pi:elec_twang": [
+  "web_line"
+ ],
+ "vc:Idiophones/Struck Idiophones/Anvil/Anvil_Hit2_v3_rr1_Mid": [
+  "round_start",
+  "ui_ready"
+ ],
+ "vc:Idiophones/Struck Idiophones/Anvil/Anvil_Hit3_v3_rr1_Mid": [
+  "hammer_smash",
+  "round_win"
+ ],
+ "vc:Idiophones/Struck Idiophones/Brake Drum/BrakeDrum1_Hammer_v3_rr1_Mid": [
+  "break_iron",
+  "round_start"
+ ],
+ "vc:Idiophones/Struck Idiophones/Brake Drum/BrakeDrum2_Hammer3_v3_rr1_Mid": [
+  "break_iron"
+ ],
+ "vc:Idiophones/Struck Idiophones/Slapstick/slapstick_rr1": [
+  "punch_heavy",
+  "punch_light",
+  "punch_mid"
+ ],
+ "vc:Idiophones/Struck Idiophones/Slapstick/slapstick_rr2": [
+  "punch_light",
+  "punch_mid"
+ ],
+ "vc:Idiophones/Struck Idiophones/Slapstick/slapstick_rr3": [
+  "punch_light",
+  "punch_mid"
+ ],
+ "vc:Membranophones/Struck Membranophones/Bass Drum 1/BDrumNew_hit_v7_rr1_Sum": [
+  "hammer_smash",
+  "round_start"
+ ],
+ "vc:Membranophones/Struck Membranophones/Timpani 1/Hit/Timpani1_Hit_v4_rr1_Sum": [
+  "round_win"
+ ]
+}
